@@ -31,6 +31,16 @@ ____
 + https://otexts.com/fpp2/
 + https://towardsdatascience.com/predict-electricity-consumption-using-time-series-analysis-4650284e40aa
 
++ https://www.analyticsvidhya.com/blog/2018/09/multivariate-time-series-guide-forecasting-modeling-python-codes/
+
+
++ https://machinelearningmastery.com/decompose-time-series-data-trend-seasonality/
++ https://www.analyticsvidhya.com/blog/2018/08/auto-arima-time-series-modeling-python-r/
++ https://www.analyticsvidhya.com/blog/2016/02/time-series-forecasting-codes-python/
+
+**Physics**
+    + https://www.solarschools.net/knowledge-bank/energy/electricity/kw-kwh-explained
+
 
 **Repository**
 + https://archive.ics.uci.edu/ml/datasets/individual+household+electric+power+consumption
