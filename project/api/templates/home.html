@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Individual Household Electric Power Consumption</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+</head>
+<body class="bg-light">
+
+    <!-- Start Navigation Bar -->
+    <nav class="navbar navbar-expand-md navbar-dark bd-navbar fixed-top">
+        <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <span class="menu-icon-brand fa fa-plug"></span>
+                    <span class="navbar-brand mb-0">Individual Household Electric Power Consumption</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#" data-toggle="modal" data-target="#aboutModal">
+                        <span class="menu-icons fa fa-users"></span> About
+                    </a>
+                </li>    
+            </ul>
+        </div>
+    </nav>
+    <!-- End Navigation Bar -->
+
+    <hr style="padding-top: 50px">
+
+    <!-- Start Main Container -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-4">
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="selectUnit">Unit</label>
+                    </div>
+    
+                    <select class="custom-select" id="selectUnit">
+                        <option value="0" selected>Currency ($)</option>
+                        <option value="1">Kilowatt hour (kWh)</option>
+                    </select>
+                </div>                        
+            </div>
+
+
+            <div class="col-4 offset-1">
+                <div class="btn-group" role="group" aria-label="date-selection">
+                    <button type="button" class="btn btn-outline-secondary" aria-pressed="true" id="dt_today" value=1>Today</button>
+                    <button type="button" class="btn btn-outline-secondary" aria-pressed="true" id="dt_week" value=7>Week</button>
+                    <button type="button" class="btn btn-outline-secondary" aria-pressed="true" id="dt_month" value=30>Month</button>
+                    <button type="button" class="btn btn-outline-secondary" aria-pressed="true" id="dt_tri" value=90>Trimester</button>
+                    <button type="button" class="btn btn-outline-secondary" aria-pressed="true" id="dt_sem" value=180>Semester</button>
+                    <button type="button" class="btn btn-outline-secondary" aria-pressed="true" id="dt_year" value=365>Year</button>
+                </div>
+            </div>
+
+            <div class="col-2 offset-1">
+                <div class="input-group mb">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">kWh ($)</span>
+                    </div>
+                    <input type="text" class="form-control" aria-label="Dollar amount (with dot and two decimal places)" id="kwh_cost">
+                  </div>
+            </div>
+        </div>
+        <hr style="padding-top: 10px">
+
+        <!-- Start Tabitems -->
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active"  id="main-tab-item" data-toggle="tab" href="#main-tab" role="tab" aria-controls="main-tab" aria-selected="true">Active Energy</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" id="equip-tab-item" data-toggle="tab" href="#equip-tab" role="tab" aria-controls="tab2" aria-selected="false">Appliances</a>
+            </li>
+        </ul>
+        <!-- End Tabitems -->
+
+        <!-- Start Tab Content -->
+        <div class="tab-content" id="myTabContent">
+            <!-- Start Dashboard Tab Content -->
+            <div class="tab-pane fade show active" id="main-tab" role="tabpanel" aria-labelledby="main-tab">
+                <!-- Line 1 Header -->
+                <div class="row" style="padding-top: 15px">
+                    <div class="col">
+                        <h6>Consume vs Prediction</h6>
+                        <hr>
+                    </div>
+                </div>
+
+                <!-- Line 1 Content -->
+                <div class="row">
+                    <div class="col offset-7">
+                        <p class="text-center"><strong>Consume</strong></p> 
+                        <p class="text-center"><span id="tot_consume"></span></p>
+                    </div>
+
+                    <div class="col">
+                        <p class="center"><strong>Predict</strong></p> 
+                        <p class="center"><span id="tot_predict"></span></p>
+                    </div>
+
+                    <div class="col">
+                        <p class="center"><strong>Change</strong></p> 
+                        <p class="center"><span id="tot_change"></span></p>
+                    </div>
+
+                    <div class="col">
+                        <p class="center"><strong>Upper Error</strong></p> 
+                        <p class="center"><span id="tot_upper_error"></span></p>
+                    </div>
+                    <div class="col">
+                        <p class="center"><strong>Lower Error</strong></p> 
+                        <p class="center"><span id="tot_lower_error"></span></p>
+                    </div>
+                </div>
+                
+                <hr>
+
+                <!-- Line 2 Content -->
+                <div class="row">
+                    <div class="col">                        
+                        <canvas id="dash_graph_cost_consume" style="height:350px;"></canvas>
+                    </div>
+                </div>
+                
+                <hr>
+                <div class="row">
+                    <div class="col">
+                        <blockquote class="blockquote text-right">
+                            <p class="mb-4">DATASOURCE</p>
+                            <footer class="blockquote-footer"><cite title="Source Title"> (<a href="https://archive.ics.uci.edu/ml/datasets/individual+household+electric+power+consumption">(https://archive.ics.uci.edu/ml/datasets/individual+household+electric+power+consumption</a>)</cite></footer>
+                        </blockquote>                        
+                    </div>
+                </div>                     
+
+            </div>
+            <!--End Dashboard Tab Content-->
+
+            <!-- Start Applicances Dashboard -->
+            <div class="tab-pane fade" id="equip-tab" role="tabpanel" aria-labelledby="equip-tab-content">
+                <div class="row" style="padding-top: 15px">                
+                    <div class="col-6">
+                        <canvas id="kitchen_consume" style="height: 300px;"></canvas>
+                    </div>
+
+                    <div class="col-6">
+                        <canvas id="laundry_consume" style="height: 300px;"></canvas>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <canvas id="water_consume" style="height: 300px;"></canvas>
+                    </div>
+
+                    <div class="col-6">
+                        <canvas id="equipment_consume" style="height: 300px;"></canvas>
+                    </div>
+                </div>                
+
+                <hr>
+                <div class="row">
+                    <div class="col">
+                        <blockquote class="blockquote text-right">
+                            <p class="mb-4">DATASOURCE</p>
+                            <footer class="blockquote-footer"><cite title="Source Title"> (<a href="https://archive.ics.uci.edu/ml/datasets/individual+household+electric+power+consumption">(https://archive.ics.uci.edu/ml/datasets/individual+household+electric+power+consumption</a>)</cite></footer>
+                        </blockquote>                        
+                    </div>
+                </div>                     
+
+
+            </div>
+            <!-- End Applicances Dashboard -->
+
+        </div>
+        <!-- End Tab Content -->
+
+
+     
+
+
+        <!-- Start aboutModal -->
+        <div class="modal fade bd-example-modal-lg" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h6 class="modal-title" id="aboutModalLabel">
+                            <p>CSC-4740 - Data Mining Spring 2020</p>
+                            <p>Georgia States University</p>
+                        </h6>
+                    </div>
+
+                    <div class="modal-body">
+                        <p class="text-center font-weight-normal"><b>Author :</b> Alexandre Geraldo</p>
+                        <p class="text-center font-weight-normal"><b>Contact :</b><a href="mailto:ageraldo1@student.gsu.edu">ageraldo1@student.gsu.edu</a></p>
+                    </div>
+
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End aboutModal -->        
+    </div>
+    <!-- End Main Container -->
+    
+    <div class="loader" id="loader" style="top: 50%; left: 50%; position: absolute; display: none; "></div>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.7/chartjs-plugin-annotation.js"></script>    
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}"> </script>    
+    <script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"> </script>    
+</body>
+
+
+</html>
